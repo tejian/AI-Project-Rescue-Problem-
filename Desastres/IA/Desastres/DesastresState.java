@@ -15,41 +15,14 @@ public class DesastresState
     /**
      * Static data structures that all the states will share
      */
-    private static Grupos  s_grupos = new Grupos (4, 4);
-    private static int     s_nHeliPerCentre = 1;
-    private static Centros s_centros = new Centros (3, s_nHeliPerCentre, 4); // all centres have same number of helicopter
+    private static int     s_nHeliPerCentre               = 1;              // all centres have same no of helis
+    private static Grupos  s_grupos                       = new Grupos (4, 4);
+    private static Centros s_centros                      = new Centros (3, s_nHeliPerCentre, 4); 
     private static int     s_helicopterCapacity           = 15;
     private static float   s_timeToSecurePerson           = 1;               // min
     private static float   s_timeToSecureInjuredPerson    = 2;               // min
     private static float   s_timeBetweenLandingAndTakeOff = 10;              // min
     private static float   s_helicopterSpeed              = 100;             // 100 km / hour
-
-    //////////////////////////////////
-    // SMALL HELPFUL DATA STRUCTURES
-    //////////////////////////////////
-    private class Trip extends ArrayList <Integer>
-    {
-        int getSum ()
-        {
-            int sum = 0;
-            for (Integer i : this)
-                sum += i;
-            return sum;
-        }
-    }
-
-    private class Helicopter
-    {
-        ArrayList <Trip> m_trips = new ArrayList<Trip> ();
-        Helicopter() {}
-    };
-
-    private class Group
-    {
-        int m_heli;
-        int m_trip;
-        Group() {}
-    }
 
     /**
      * datas to represent the state we are in
@@ -59,7 +32,6 @@ public class DesastresState
      */
     ArrayList <Helicopter> m_helicopters;
     ArrayList <Group> m_gruops;
-
 
     //////////////////////////////////////////////////////////////
     // FUNCTIONS
@@ -73,7 +45,7 @@ public class DesastresState
     }
 
     /**
-     * Number of Groups
+     * Number of Grupos
      * @return number of gruops
      */
     public static int getGrupoCount()
@@ -156,7 +128,7 @@ public class DesastresState
      * capacity constrains of each flight (15 person per flight)
      * @return true if the swap was succesful false if not
      */
-    public boolean swapGruop (int x, int y)
+    public boolean swapGroup (int x, int y)
     {
         Group a = m_gruops.get (x);
         Group b = m_gruops.get (y);
@@ -269,7 +241,7 @@ public class DesastresState
         hehe.generateInitialStateDefault();
         hehe.testPrintState();
         // hehe.swapGruop (0,1);
-        hehe.swapGruop (2,3);
+        hehe.swapGroup (2,3);
         hehe.testPrintState();
     }
 

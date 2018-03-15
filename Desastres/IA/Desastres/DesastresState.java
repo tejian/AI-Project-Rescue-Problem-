@@ -15,25 +15,32 @@ public class DesastresState
     /**
      * Static data structures that all the states will share
      */
-    private static Grupos  s_grupos = new Grupos (10, 10);
-    private static Centros s_centros = new Centros (10, 10, 10); // all centres have same number of helicopter
-    private static int nHeliPerCentre = 10;
+    private static Grupos  s_grupos = new Grupos (4, 4);
+    private static int     s_nHeliPerCentre = 1;
+    private static Centros s_centros = new Centros (3, s_nHeliPerCentre, 4); // all centres have same number of helicopter
     private static int     s_helicopterCapacity           = 15;
-    private static float   s_timeToSecurePerson           = 1;   // min
-    private static float   s_timeToSecureInjuredPerson    = 2;   // min
-    private static float   s_timeBetweenLandingAndTakeOff = 10;  // min
-    private static float   s_helicopterSpeed              = 100; // 100 km / hour
+    private static float   s_timeToSecurePerson           = 1;               // min
+    private static float   s_timeToSecureInjuredPerson    = 2;               // min
+    private static float   s_timeBetweenLandingAndTakeOff = 10;              // min
+    private static float   s_helicopterSpeed              = 100;             // 100 km / hour
 
     //////////////////////////////////
     // SMALL HELPFUL DATA STRUCTURES
     //////////////////////////////////
-    private class Trip
+    private class Trip extends ArrayList <Integer>
     {
-        ArrayList <Integer> m_savedGroup;
+        int getSum ()
+        {
+            int sum = 0;
+            for (Integer i : this)
+                sum += i;
+            return sum;
+        }
     }
+
     private class Helicopter
     {
-        ArrayList <Trip> m_trips;
+        ArrayList <Trip> m_trips = new ArrayList<Trip> ();
         Helicopter() {}
     };
 
@@ -90,6 +97,7 @@ public class DesastresState
      */
     public DesastresState (DesastresState p_desastre)
     {
+        // simply recursively copies helicopters abd groups
     }
 
     ///////////////////////////////////////////////////////////////
@@ -97,7 +105,7 @@ public class DesastresState
     ////////////////////////////////////////////////////////////
     /**
      * Default inital state generator
-     * simply assigns as groups to a flight as long as it can carry
+     * simply assigns groups to a flight as long as it can carry
      */
     public void generateInitialStateDefault ()
     {
@@ -117,12 +125,25 @@ public class DesastresState
             m_gruops.add (new Group());
         }
 
-        // need to complete
         int currentHeliIndex = 0;
+        m_helicopters.get (0).m_trips.add (new Trip());
         int currentTripIndex = 0;
         int currentPersonCount = 0;
         for (int i = 0; i < nGrups; ++i)
         {
+            if (currentPersonCount + s_grupos.get (i).getNPersonas() > s_helicopterCapacity)
+            {
+                currentHeliIndex++;
+                currentHeliIndex = currentHeliIndex % m_helicopters.size();
+                m_helicopters.get (currentHeliIndex).m_trips.add (new Trip());
+                currentTripIndex = m_helicopters.get (currentHeliIndex).m_trips.size() - 1;
+                currentPersonCount = 0;
+            }
+            Trip trip = m_helicopters.get (currentHeliIndex).m_trips.get (currentTripIndex);
+            trip.add (i);
+            m_gruops.get (i).m_heli = currentHeliIndex;
+            m_gruops.get (i).m_trip = currentTripIndex;
+            currentPersonCount += s_grupos.get (i).getNPersonas();
         }
     }
 
@@ -133,10 +154,41 @@ public class DesastresState
     /**
      * swaps the helis and the trip between two groups if is satisfies the
      * capacity constrains of each flight (15 person per flight)
-     * @pre x and y is less than total number of groups
+     * @return true if the swap was succesful false if not
      */
-    public void swapGrup (int x, int y)
+    public boolean swapGruop (int x, int y)
     {
+        Group a = m_gruops.get (x);
+        Group b = m_gruops.get (y);
+        // if swapping is possible
+        int count = m_helicopters.get (a.m_heli).m_trips.get (a.m_trip).getSum();
+        if (count - s_grupos.get (x).getNPersonas() +
+            s_grupos.get (y).getNPersonas() > s_helicopterCapacity)
+            return false;
+        count = m_helicopters.get (b.m_heli).m_trips.get (b.m_trip).getSum();
+        if (count - s_grupos.get (y).getNPersonas() +
+            s_grupos.get (x).getNPersonas() > s_helicopterCapacity)
+            return false;
+        // now swap them
+        Trip atrip = m_helicopters.get (a.m_heli).m_trips.get (a.m_trip);
+        Trip btrip = m_helicopters.get (b.m_heli).m_trips.get (b.m_trip);
+
+        int ai = atrip.indexOf (x);
+        int bi = btrip.indexOf (y);
+
+        atrip.set (ai, y);
+        btrip.set (bi, x);
+
+        int t_heli = a.m_heli;
+        int t_trip = a.m_trip;
+
+        a.m_heli = b.m_heli;
+        a.m_trip = b.m_trip;
+
+        b.m_heli = t_heli;
+        b.m_trip = t_trip;
+
+        return true;
     }
 
     ///////////////////////////////////////////////////////////////////////////
@@ -144,6 +196,9 @@ public class DesastresState
     ///////////////////////////////////////////////////////////////////////////
 
     /**
+     * simple heuristic will simply return the total amount of time
+     * consumed in saving all groups
+     * (wont account for helis flying in parallel)
      */
     public double getTotalTimeHeuristic()
     {
@@ -153,17 +208,69 @@ public class DesastresState
     //////////////////////////////////////////////////////
     //
     /////////////////////////////////////////////////////
-    public void testPrint()
+    /**
+     * prints all groups and centres
+     */
+    public void testPrintCentrosAndGrupos()
     {
-        System.out.println (m_helicopters.size());
-        System.out.println (m_gruops.size());
+        System.out.println ("printing centres");
+        for (Centro c : s_centros)
+        {
+            System.out.println ("coord x : " + c.getCoordX());
+            System.out.println ("coord y : " + c.getCoordY());
+            System.out.println ("no Heli : " + c.getNHelicopteros());
+            System.out.println ("----------------------");
+        }
+        System.out.println ("printing groups");
+        for (Grupo g : s_grupos)
+        {
+            System.out.println ("coord x : " + g.getCoordX());
+            System.out.println ("coord y : " + g.getCoordY());
+            System.out.println ("no personcount : " + g.getNPersonas());
+            System.out.println ("priority : " + g.getPrioridad());
+            System.out.println ("----------------------");
+        }
+    }
+
+    /**
+     * prints the state were in
+     */
+    public void testPrintState()
+    {
+        System.out.println ("Printing HeliCopters");
+        for (int i = 0; i < m_helicopters.size(); ++i)
+        {
+            Helicopter heli = m_helicopters.get (i);
+            System.out.println ("mi centro :" + i / s_nHeliPerCentre);
+            System.out.println ("Trips :");
+            for (Trip trip : heli.m_trips)
+            {
+                for (Integer j : trip)
+                    System.out.println (j);
+                System.out.println ("----");
+            }
+            System.out.println ("------------------");
+        }
+
+        System.out.println ("Printing Grupos");
+        for (int i = 0; i < m_gruops.size(); ++i)
+        {
+            System.out.println ("group : " + i);
+            System.out.println ("my heli : " + m_gruops.get (i).m_heli);
+            System.out.println ("my trip : " + m_gruops.get (i).m_trip);
+            System.out.println ("-----");
+        }
     }
 
     public static void main (String [] args)
     {
         DesastresState hehe = new DesastresState ();
+        // hehe.testPrintCentrosAndGrupos();
         hehe.generateInitialStateDefault();
-        hehe.testPrint();
+        hehe.testPrintState();
+        // hehe.swapGruop (0,1);
+        hehe.swapGruop (2,3);
+        hehe.testPrintState();
     }
 
 };

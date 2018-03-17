@@ -72,14 +72,10 @@ public class DesastresState
 
         // helicopter belong to centre -- (current index) % nHeliPerCentre
         for (int i = 0; i < nHelis; ++i)
-        {
             m_helicopters.add (new Helicopter());
-        }
 
         for (int i = 0; i < nGrups; ++i)
-        {
             m_gruops.add (new Group());
-        }
 
         int currentHeliIndex = 0;
         m_helicopters.get (0).getTrips().add (new Trip());
@@ -121,16 +117,12 @@ public class DesastresState
         if (!(a.m_heli == b.m_heli) || !(a.m_trip == b.m_trip))
         {
             // check if swapping is possible .i.e. number of people is less that capacity
-            CountTripVisitor visitor = new CountTripVisitor (s_grupos);
-            m_helicopters.get (a.m_heli).getTrips().get (a.m_trip).accept(visitor);
-            int count = visitor.getCount();
+            int count = m_helicopters.get (a.m_heli).getTrips().get (a.m_trip).getPersonCount(s_grupos);
             if (count - s_grupos.get (x).getNPersonas() +
                 s_grupos.get (y).getNPersonas() > s_helicopterCapacity)
                 return false;
 
-            visitor.setCount (0);
-            m_helicopters.get (b.m_heli).getTrips().get (b.m_trip).accept (visitor);
-            count = visitor.getCount();
+            count = m_helicopters.get (b.m_heli).getTrips().get (b.m_trip).getPersonCount(s_grupos);
             if (count - s_grupos.get (y).getNPersonas() +
                 s_grupos.get (x).getNPersonas() > s_helicopterCapacity)
                 return false;

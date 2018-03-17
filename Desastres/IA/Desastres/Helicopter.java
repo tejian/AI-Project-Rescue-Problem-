@@ -10,6 +10,9 @@ public class Helicopter
     private ArrayList <Trip> m_trips = new ArrayList<Trip> ();
     public Helicopter() {}
 
+    /**
+     * Gets vector of trip this helicopter will be taking
+     */
     public ArrayList <Trip> getTrips()
     {
         return m_trips;

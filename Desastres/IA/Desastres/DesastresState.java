@@ -36,22 +36,6 @@ public class DesastresState
     //////////////////////////////////////////////////////////////
     // FUNCTIONS
     //////////////////////////////////////////////////////////////
-    /**
-     * Number of Centres
-     * @return number of centres
-     */
-    public static int getCentreCount() {
-        return s_centros.size();
-    }
-
-    /**
-     * Number of Grupos
-     * @return number of gruops
-     */
-    public static int getGrupoCount()
-    {
-        return s_grupos.size();
-    }
 
     //////////////////////////////////////////////////////////////
     // CONSTRUCTORS
@@ -98,7 +82,7 @@ public class DesastresState
         }
 
         int currentHeliIndex = 0;
-        m_helicopters.get (0).m_trips.add (new Trip());
+        m_helicopters.get (0).getTrips().add (new Trip());
         int currentTripIndex = 0;
         int currentPersonCount = 0;
         for (int i = 0; i < nGrups; ++i)
@@ -107,11 +91,11 @@ public class DesastresState
             {
                 currentHeliIndex++;
                 currentHeliIndex = currentHeliIndex % m_helicopters.size();
-                m_helicopters.get (currentHeliIndex).m_trips.add (new Trip());
-                currentTripIndex = m_helicopters.get (currentHeliIndex).m_trips.size() - 1;
+                m_helicopters.get (currentHeliIndex).getTrips().add (new Trip());
+                currentTripIndex = m_helicopters.get (currentHeliIndex).getTrips().size() - 1;
                 currentPersonCount = 0;
             }
-            Trip trip = m_helicopters.get (currentHeliIndex).m_trips.get (currentTripIndex);
+            Trip trip = m_helicopters.get (currentHeliIndex).getTrips().get (currentTripIndex);
             trip.add (i);
             m_gruops.get (i).m_heli = currentHeliIndex;
             m_gruops.get (i).m_trip = currentTripIndex;
@@ -132,21 +116,35 @@ public class DesastresState
     {
         Group a = m_gruops.get (x);
         Group b = m_gruops.get (y);
-        // if swapping is possible
-        int count = m_helicopters.get (a.m_heli).m_trips.get (a.m_trip).getSum();
-        if (count - s_grupos.get (x).getNPersonas() +
-            s_grupos.get (y).getNPersonas() > s_helicopterCapacity)
-            return false;
-        count = m_helicopters.get (b.m_heli).m_trips.get (b.m_trip).getSum();
-        if (count - s_grupos.get (y).getNPersonas() +
-            s_grupos.get (x).getNPersonas() > s_helicopterCapacity)
-            return false;
+
+        // if the groups dont belong to the very same trip
+        if (!(a.m_heli == b.m_heli) || !(a.m_trip == b.m_trip))
+        {
+            // if swapping is possible .i.e. number of people is less that capacity
+            CountTripVisitor visitor = new CountTripVisitor (s_grupos);
+            m_helicopters.get (a.m_heli).getTrips().get (a.m_trip).accept(visitor);
+            int count = visitor.getCount();
+            if (count - s_grupos.get (x).getNPersonas() +
+                s_grupos.get (y).getNPersonas() > s_helicopterCapacity)
+                return false;
+
+            visitor.setCount (0);
+            m_helicopters.get (b.m_heli).getTrips().get (b.m_trip).accept (visitor);
+            count = visitor.getCount();
+            if (count - s_grupos.get (y).getNPersonas() +
+                s_grupos.get (x).getNPersonas() > s_helicopterCapacity)
+                return false;
+        }
+
         // now swap them
-        Trip atrip = m_helicopters.get (a.m_heli).m_trips.get (a.m_trip);
-        Trip btrip = m_helicopters.get (b.m_heli).m_trips.get (b.m_trip);
+        Trip atrip = m_helicopters.get (a.m_heli).getTrips().get (a.m_trip);
+        Trip btrip = m_helicopters.get (b.m_heli).getTrips().get (b.m_trip);
 
         int ai = atrip.indexOf (x);
         int bi = btrip.indexOf (y);
+
+        System.out.println (ai);
+        System.out.println (bi);
 
         atrip.set (ai, y);
         btrip.set (bi, x);
@@ -215,7 +213,7 @@ public class DesastresState
             Helicopter heli = m_helicopters.get (i);
             System.out.println ("mi centro :" + i / s_nHeliPerCentre);
             System.out.println ("Trips :");
-            for (Trip trip : heli.m_trips)
+            for (Trip trip : heli.getTrips())
             {
                 for (Integer j : trip)
                     System.out.println (j);
@@ -237,11 +235,11 @@ public class DesastresState
     public static void main (String [] args)
     {
         DesastresState hehe = new DesastresState ();
-        // hehe.testPrintCentrosAndGrupos();
+        //hehe.testPrintCentrosAndGrupos();
         hehe.generateInitialStateDefault();
-        hehe.testPrintState();
-        // hehe.swapGruop (0,1);
-        hehe.swapGroup (2,3);
+        //hehe.testPrintState();
+        //hehe.swapGroup (0,1);
+        hehe.swapGroup (2,3)
         hehe.testPrintState();
     }
 

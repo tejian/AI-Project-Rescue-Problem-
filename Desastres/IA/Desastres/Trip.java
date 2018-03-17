@@ -9,14 +9,8 @@ import java.util.ArrayList;
  */
 public class Trip extends ArrayList <Integer>
 {
-    /**
-     * Return sum of elements
-     */
-    public int getSum ()
+    void accept (ITripVisitor p_visitor)
     {
-        int sum = 0;
-        for (Integer i : this)
-            sum += i;
-        return sum;
+        p_visitor.visit (this);
     }
 }

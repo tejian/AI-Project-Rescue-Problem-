@@ -7,7 +7,12 @@ import java.util.ArrayList;
  */
 public class Helicopter
 {
-    public ArrayList <Trip> m_trips = new ArrayList<Trip> ();
+    private ArrayList <Trip> m_trips = new ArrayList<Trip> ();
     public Helicopter() {}
-};
+
+    public ArrayList <Trip> getTrips()
+    {
+        return m_trips;
+    }
+}
 

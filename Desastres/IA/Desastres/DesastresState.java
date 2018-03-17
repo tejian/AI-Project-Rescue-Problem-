@@ -28,7 +28,7 @@ public class DesastresState
      * datas to represent the state we are in
      * Helicopter contains the list of trips and trips contain list of groups it saved
      * groups contain in which trip it is being saved on
-     * memory cost 2 * number of groups (much nore in reality)
+     * memory cost 2 * number of groups + ints stored in helis (aprox no of gruops)
      */
     ArrayList <Helicopter> m_helicopters;
     ArrayList <Group> m_gruops;
@@ -120,7 +120,7 @@ public class DesastresState
         // if the groups dont belong to the very same trip
         if (!(a.m_heli == b.m_heli) || !(a.m_trip == b.m_trip))
         {
-            // if swapping is possible .i.e. number of people is less that capacity
+            // check if swapping is possible .i.e. number of people is less that capacity
             CountTripVisitor visitor = new CountTripVisitor (s_grupos);
             m_helicopters.get (a.m_heli).getTrips().get (a.m_trip).accept(visitor);
             int count = visitor.getCount();
@@ -142,9 +142,6 @@ public class DesastresState
 
         int ai = atrip.indexOf (x);
         int bi = btrip.indexOf (y);
-
-        System.out.println (ai);
-        System.out.println (bi);
 
         atrip.set (ai, y);
         btrip.set (bi, x);
@@ -239,7 +236,7 @@ public class DesastresState
         hehe.generateInitialStateDefault();
         //hehe.testPrintState();
         //hehe.swapGroup (0,1);
-        hehe.swapGroup (2,3)
+        hehe.swapGroup (2,3);
         hehe.testPrintState();
     }
 

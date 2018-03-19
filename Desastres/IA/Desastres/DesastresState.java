@@ -122,6 +122,7 @@ public class DesastresState
                 s_grupos.get (y).getNPersonas() > s_helicopterCapacity)
                 return false;
 
+
             count = m_helicopters.get (b.m_heli).getTrips().get (b.m_trip).getPersonCount(s_grupos);
             if (count - s_grupos.get (y).getNPersonas() +
                 s_grupos.get (x).getNPersonas() > s_helicopterCapacity)

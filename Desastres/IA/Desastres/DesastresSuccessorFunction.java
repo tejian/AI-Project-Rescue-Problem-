@@ -9,7 +9,7 @@ import java.util.List;
 public class DesastresSuccessorFunction implements SuccessorFunction {
     public List getSuccessors(Object aState) {
         ArrayList retVal = new ArrayList();
-
+        retVal.add (new Successor ("hehe", aState));
         return retVal;
     }
 }

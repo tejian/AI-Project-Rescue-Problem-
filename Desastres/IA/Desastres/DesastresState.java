@@ -221,6 +221,7 @@ public class DesastresState
         }
     }
 
+    /*
     public static void main (String [] args)
     {
         DesastresState hehe = new DesastresState ();
@@ -231,5 +232,5 @@ public class DesastresState
         hehe.swapGroup (2,3);
         hehe.testPrintState();
     }
-
+    */
 };

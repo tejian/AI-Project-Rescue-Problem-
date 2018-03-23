@@ -1,5 +1,5 @@
 import IA.Desastres.DesastresState;
-import IA.Desastres.DesastresHeuristicFunction;
+import IA.Desastres.DesasterTotalTimeHeuristic;
 import IA.Desastres.DesastresSuccessorFunction;
 import IA.Desastres.DesastresGoalTest;
 
@@ -28,7 +28,7 @@ class Main
             Problem problem =  new Problem(p_state,
                     new DesastresSuccessorFunction(),
                     new DesastresGoalTest(),
-                    new DesastresHeuristicFunction());
+                    new DesasterTotalTimeHeuristic());
             Search search =  new HillClimbingSearch();
             SearchAgent agent = new SearchAgent(problem,search);
 

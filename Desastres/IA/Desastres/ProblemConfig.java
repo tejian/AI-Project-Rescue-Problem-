@@ -16,6 +16,7 @@ public class ProblemConfig
     public float   timeToSecureInjuredPerson;
     public float   timeBetweenLandingAndTakeOff;
     public float   helicopterSpeed;
+    public float   heliGroupCapacity;
 
     /**
      * constructor
@@ -27,7 +28,8 @@ public class ProblemConfig
                           float   p_timeToSecurePerson,
                           float   p_timeToSecureInjuredPerson,
                           float   p_timeBetweenLandingAndTakeOff,
-                          float   p_helicopterSpeed)                 
+                          float   p_helicopterSpeed,                 
+                          float   p_heliGroupCapacity)                 
     {
         nHeliPerCentre               = p_nHeliPerCentre;
         grupos                       = p_grupos;
@@ -37,5 +39,6 @@ public class ProblemConfig
         timeToSecureInjuredPerson    = p_timeToSecureInjuredPerson;
         timeBetweenLandingAndTakeOff = p_timeBetweenLandingAndTakeOff;
         helicopterSpeed              = p_helicopterSpeed;
+        heliGroupCapacity            = p_heliGroupCapacity;
     }
 }

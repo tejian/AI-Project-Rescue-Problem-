@@ -2,7 +2,7 @@ package IA.Desastres;
 
 import java.util.ArrayList;
 
-/** 
+/**
  * Class representing the state of the problem
  */
 
@@ -17,16 +17,17 @@ public class DesastresState
      */
     // modify the variables here to test new config problems
     // we may need getters and setters for this in future
-    static int s_helicopterPerCenter = 2;                  
-    static ProblemConfig s_config = new ProblemConfig       ( 
-     /* nHeliPerCentre,                                   */ s_helicopterPerCenter,                    
-     /* grupos,                                           */ new Grupos (20, 4),   
-     /* centros, (centres have same number of helicopter) */ new Centros (3, s_helicopterPerCenter, 4),
-     /* helicopterCapacity,                               */ 15,                   
-     /* timeToSecurePerson, (min)                         */ 1,                    
-     /* timeToSecureInjuredPerson, (min)                  */ 2,                    
-     /* timeBetweenLandingAndTakeOff, (min)               */ 10,                   
-     /* helicopterSpeed  (km/h)                           */ 100                    
+    static int s_helicopterPerCenter = 1;
+    static ProblemConfig s_config = new ProblemConfig       (
+     /* nHeliPerCentre,                                   */ s_helicopterPerCenter,
+     /* grupos,                                           */ new Grupos (25, 4),
+     /* centros, (centres have same number of helicopter) */ new Centros (4, s_helicopterPerCenter, 4),
+     /* helicopterCapacity,                               */ 15,
+     /* timeToSecurePerson, (min)                         */ 1,
+     /* timeToSecureInjuredPerson, (min)                  */ 2,
+     /* timeBetweenLandingAndTakeOff, (min)               */ 10,
+     /* helicopterSpeed  (km/h)                           */ 100,
+     /* heliGroupCapacity                                 */ 3
                                                             );
 
 
@@ -48,14 +49,14 @@ public class DesastresState
     // CONSTRUCTORS
     //////////////////////////////////////////////////////////////
 
-    /** 
+    /**
      * Empty constuctor
      */
     public DesastresState ()
     {
     }
 
-    /** 
+    /**
      * Clones this desaster state.
      */
     public DesastresState clone ()
@@ -87,6 +88,11 @@ public class DesastresState
         return m_gruops.size();
     }
 
+    public static final ProblemConfig getProblemConfig()
+    {
+        return s_config;
+    }
+
 
     ///////////////////////////////////////////////////////////////
     // DIFFERENT FUNCTIONS TO GENERATE INTIAL STATES
@@ -94,14 +100,14 @@ public class DesastresState
     /**
      * Default inital state generator.
      * Simply assigns groups to a flight as long as it can carry
-     * Must Be Always called at the beginning otherwise 
+     * Must Be Always called at the beginning otherwise
      * all the other functions will result in error
      */
     public void generateInitialStateDefault ()
     {
         int nHelis = s_config.centros.size() * s_config.centros.get (0).getNHelicopteros();
         int nGrups = s_config.grupos.size();
-        m_helicopters = new ArrayList <Helicopter> (nHelis); 
+        m_helicopters = new ArrayList <Helicopter> (nHelis);
         m_gruops      = new ArrayList <Group> (nGrups);
 
         // helicopter belong to centre -- (current index) / nHeliPerCentre
@@ -115,10 +121,13 @@ public class DesastresState
         m_helicopters.get (0).getTrips().add (new Trip());
         int currentTripIndex = 0;
         int currentPersonCount = 0;
+        int currentGroupCount = 0; // number of groups in current trip
         for (int i = 0; i < nGrups; ++i)
         {
-            if (currentPersonCount + s_config.grupos.get (i).getNPersonas() > s_config.helicopterCapacity)
+            if (currentPersonCount + s_config.grupos.get (i).getNPersonas() > s_config.helicopterCapacity ||
+                currentGroupCount >= s_config.heliGroupCapacity)
             {
+                currentGroupCount = 0;
                 currentHeliIndex++;
                 currentHeliIndex = currentHeliIndex % m_helicopters.size();
                 m_helicopters.get (currentHeliIndex).getTrips().add (new Trip());
@@ -130,6 +139,7 @@ public class DesastresState
             m_gruops.get (i).m_heli = currentHeliIndex;
             m_gruops.get (i).m_trip = currentTripIndex;
             currentPersonCount += s_config.grupos.get (i).getNPersonas();
+            ++currentGroupCount;
         }
     }
 
@@ -273,9 +283,9 @@ public class DesastresState
         hehe.testPrintCentrosAndGrupos();
         hehe.generateInitialStateDefault();
         hehe.testPrintState();
-        hehe.swapGroup (0,1);
-        hehe.swapGroup (2,3);
+        //hehe.swapGroup (0,1);
+        //hehe.swapGroup (2,3);
         //hehe.testPrintState();
-        System.out.println (hehe.getTotalTimeHeuristic());
+        //System.out.println (hehe.getTotalTimeHeuristic());
     }
 };

@@ -15,14 +15,21 @@ public class DesastresState
     /**
      * Static data structures that all the states will share
      */
-    private static int     s_nHeliPerCentre               = 1;              // all centres have same no of helis
-    private static Grupos  s_grupos                       = new Grupos (4, 4);
-    private static Centros s_centros                      = new Centros (3, s_nHeliPerCentre, 4); 
-    private static int     s_helicopterCapacity           = 15;
-    private static float   s_timeToSecurePerson           = 1;               // min
-    private static float   s_timeToSecureInjuredPerson    = 2;               // min
-    private static float   s_timeBetweenLandingAndTakeOff = 10;              // min
-    private static float   s_helicopterSpeed              = 100;             // 100 km / hour
+    // modify the variables here to test new config problems
+    // we may need getters and setters for this in future
+    static int s_helicopterPerCenter = 2;                  
+    static ProblemConfig s_config = new ProblemConfig       ( 
+     /* nHeliPerCentre,                                   */ s_helicopterPerCenter,                    
+     /* grupos,                                           */ new Grupos (20, 4),   
+     /* centros, (centres have same number of helicopter) */ new Centros (3, s_helicopterPerCenter, 4),
+     /* helicopterCapacity,                               */ 15,                   
+     /* timeToSecurePerson, (min)                         */ 1,                    
+     /* timeToSecureInjuredPerson, (min)                  */ 2,                    
+     /* timeBetweenLandingAndTakeOff, (min)               */ 10,                   
+     /* helicopterSpeed  (km/h)                           */ 100                    
+                                                            );
+
+
 
     /**
      * datas to represent the state we are in
@@ -30,8 +37,8 @@ public class DesastresState
      * groups contain in which trip it is being saved on
      * memory cost 2 * number of groups + ints stored in helis (aprox no of gruops)
      */
-    ArrayList <Helicopter> m_helicopters;
-    ArrayList <Group> m_gruops;
+    ArrayList <Helicopter> m_helicopters = new ArrayList<Helicopter>();
+    ArrayList <Group> m_gruops           = new ArrayList<Group>();
 
     //////////////////////////////////////////////////////////////
     // FUNCTIONS
@@ -49,28 +56,55 @@ public class DesastresState
     }
 
     /** 
-     * Copy Constructor
+     * Clones this desaster state.
      */
-    public DesastresState (DesastresState p_desastre)
+    public DesastresState clone ()
     {
-        // simply recursively copies helicopters abd groups
+        DesastresState ds = new DesastresState();
+        for (Helicopter heli : m_helicopters)
+            ds.getHelicopters().add (heli.clone());
+        for (Group group : m_gruops)
+            ds.getGroups().add (group.clone());
+
+        return ds;
     }
+
+    ///////////////////////////////////////////////
+    // GETTERS
+    ///////////////////////////////////////////////
+    public ArrayList <Helicopter> getHelicopters()
+    {
+        return m_helicopters;
+    }
+
+    public ArrayList <Group> getGroups()
+    {
+        return m_gruops;
+    }
+
+    public int getNGroups()
+    {
+        return m_gruops.size();
+    }
+
 
     ///////////////////////////////////////////////////////////////
     // DIFFERENT FUNCTIONS TO GENERATE INTIAL STATES
     ////////////////////////////////////////////////////////////
     /**
-     * Default inital state generator
-     * simply assigns groups to a flight as long as it can carry
+     * Default inital state generator.
+     * Simply assigns groups to a flight as long as it can carry
+     * Must Be Always called at the beginning otherwise 
+     * all the other functions will result in error
      */
     public void generateInitialStateDefault ()
     {
-        int nHelis = s_centros.size() * s_centros.get (0).getNHelicopteros();
-        int nGrups = s_grupos.size();
+        int nHelis = s_config.centros.size() * s_config.centros.get (0).getNHelicopteros();
+        int nGrups = s_config.grupos.size();
         m_helicopters = new ArrayList <Helicopter> (nHelis); 
         m_gruops      = new ArrayList <Group> (nGrups);
 
-        // helicopter belong to centre -- (current index) % nHeliPerCentre
+        // helicopter belong to centre -- (current index) / nHeliPerCentre
         for (int i = 0; i < nHelis; ++i)
             m_helicopters.add (new Helicopter());
 
@@ -83,7 +117,7 @@ public class DesastresState
         int currentPersonCount = 0;
         for (int i = 0; i < nGrups; ++i)
         {
-            if (currentPersonCount + s_grupos.get (i).getNPersonas() > s_helicopterCapacity)
+            if (currentPersonCount + s_config.grupos.get (i).getNPersonas() > s_config.helicopterCapacity)
             {
                 currentHeliIndex++;
                 currentHeliIndex = currentHeliIndex % m_helicopters.size();
@@ -95,7 +129,7 @@ public class DesastresState
             trip.add (i);
             m_gruops.get (i).m_heli = currentHeliIndex;
             m_gruops.get (i).m_trip = currentTripIndex;
-            currentPersonCount += s_grupos.get (i).getNPersonas();
+            currentPersonCount += s_config.grupos.get (i).getNPersonas();
         }
     }
 
@@ -110,6 +144,10 @@ public class DesastresState
      */
     public boolean swapGroup (int x, int y)
     {
+        // if they are same no need to swap
+        if (x == y)
+            return false;
+
         Group a = m_gruops.get (x);
         Group b = m_gruops.get (y);
 
@@ -117,15 +155,15 @@ public class DesastresState
         if (!(a.m_heli == b.m_heli) || !(a.m_trip == b.m_trip))
         {
             // check if swapping is possible .i.e. number of people is less that capacity
-            int count = m_helicopters.get (a.m_heli).getTrips().get (a.m_trip).getPersonCount(s_grupos);
-            if (count - s_grupos.get (x).getNPersonas() +
-                s_grupos.get (y).getNPersonas() > s_helicopterCapacity)
+            int count = m_helicopters.get (a.m_heli).getTrips().get (a.m_trip).getPersonCount(s_config.grupos);
+            if (count - s_config.grupos.get (x).getNPersonas() +
+                s_config.grupos.get (y).getNPersonas() > s_config.helicopterCapacity)
                 return false;
 
 
-            count = m_helicopters.get (b.m_heli).getTrips().get (b.m_trip).getPersonCount(s_grupos);
-            if (count - s_grupos.get (y).getNPersonas() +
-                s_grupos.get (x).getNPersonas() > s_helicopterCapacity)
+            count = m_helicopters.get (b.m_heli).getTrips().get (b.m_trip).getPersonCount(s_config.grupos);
+            if (count - s_config.grupos.get (y).getNPersonas() +
+                s_config.grupos.get (x).getNPersonas() > s_config.helicopterCapacity)
                 return false;
         }
 
@@ -156,13 +194,20 @@ public class DesastresState
     ///////////////////////////////////////////////////////////////////////////
 
     /**
-     * simple heuristic will simply return the total amount of time
-     * consumed in saving all groups
+     * Simple heuristic will simply return the total amount of time consumed in saving all groups.
      * (wont account for helis flying in parallel)
      */
     public double getTotalTimeHeuristic()
     {
-        return 0;
+        double result = 0.0;
+        for (int i = 0; i < m_helicopters.size(); ++i)
+        {
+            int x = s_config.centros.get (i / s_config.nHeliPerCentre).getCoordX();
+            int y = s_config.centros.get (i / s_config.nHeliPerCentre).getCoordY();
+            Helicopter heli = m_helicopters.get (i);
+            result += heli.computeTotalTripTime (x, y, s_config);
+        }
+        return result;
     }
 
     //////////////////////////////////////////////////////
@@ -174,7 +219,7 @@ public class DesastresState
     public void testPrintCentrosAndGrupos()
     {
         System.out.println ("printing centres");
-        for (Centro c : s_centros)
+        for (Centro c : s_config.centros)
         {
             System.out.println ("coord x : " + c.getCoordX());
             System.out.println ("coord y : " + c.getCoordY());
@@ -182,7 +227,7 @@ public class DesastresState
             System.out.println ("----------------------");
         }
         System.out.println ("printing groups");
-        for (Grupo g : s_grupos)
+        for (Grupo g : s_config.grupos)
         {
             System.out.println ("coord x : " + g.getCoordX());
             System.out.println ("coord y : " + g.getCoordY());
@@ -201,7 +246,7 @@ public class DesastresState
         for (int i = 0; i < m_helicopters.size(); ++i)
         {
             Helicopter heli = m_helicopters.get (i);
-            System.out.println ("mi centro :" + i / s_nHeliPerCentre);
+            System.out.println ("mi centro :" + i / s_config.nHeliPerCentre);
             System.out.println ("Trips :");
             for (Trip trip : heli.getTrips())
             {
@@ -222,16 +267,15 @@ public class DesastresState
         }
     }
 
-    /*
     public static void main (String [] args)
     {
         DesastresState hehe = new DesastresState ();
-        //hehe.testPrintCentrosAndGrupos();
+        hehe.testPrintCentrosAndGrupos();
         hehe.generateInitialStateDefault();
-        //hehe.testPrintState();
-        //hehe.swapGroup (0,1);
-        hehe.swapGroup (2,3);
         hehe.testPrintState();
+        hehe.swapGroup (0,1);
+        hehe.swapGroup (2,3);
+        //hehe.testPrintState();
+        System.out.println (hehe.getTotalTimeHeuristic());
     }
-    */
 };

@@ -46,5 +46,7 @@
 
 1) Total amount of time take to rescue all
 
+============================INITIAL STATE GENERATION ===================================
+1) simply assing groups to helicopter trip if possible
 
 

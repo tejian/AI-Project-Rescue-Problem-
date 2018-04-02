@@ -26,9 +26,9 @@ class Main
         try
         {
             Problem problem =  new Problem(p_state,
-                    new DesastresSuccessorFunction(),
-                    new DesastresGoalTest(),
-                    new DesasterTotalTimeHeuristic());
+                                           new DesastresSuccessorFunction(),
+                                           new DesastresGoalTest(),
+                                           new DesasterTotalTimeHeuristic());
             Search search =  new HillClimbingSearch();
             SearchAgent agent = new SearchAgent(problem,search);
 
@@ -41,6 +41,7 @@ class Main
             e.printStackTrace();
         }
     }
+
 
     private static void printInstrumentation(Properties properties) {
         Iterator keys = properties.keySet().iterator();
@@ -58,5 +59,5 @@ class Main
             System.out.println(action);
         }
     }
-}
+} 
 

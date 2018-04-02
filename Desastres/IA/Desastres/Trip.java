@@ -2,7 +2,6 @@ package IA.Desastres;
 
 import java.util.ArrayList;
 
-
 /**
  * Class reprsenting one trip made by a helicopter.
  * Contains index of groups it carries during the trip
@@ -79,14 +78,15 @@ public class Trip extends ArrayList <Integer>
     // tests
     public static void main (String[] args)
     {
-        ProblemConfig s_config = new ProblemConfig ( 1,                   
-                                                    new Grupos (4, 4),    
+        ProblemConfig s_config = new ProblemConfig ( 1,
+                                                    new Grupos (4, 4),
                                                     new Centros (3, 1, 4),
-                                                    15,                   
-                                                    1,                    
-                                                    2,                    
-                                                    10,                   
-                                                    100                   
+                                                    15,
+                                                    1,
+                                                    2,
+                                                    10,
+                                                    100,
+                                                    3
                                                     );
         Trip a = new Trip();
         a.add (0);

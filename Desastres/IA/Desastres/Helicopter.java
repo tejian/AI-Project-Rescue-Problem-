@@ -75,15 +75,17 @@ public class Helicopter
     // testing
     public static void main (String[] args)
     {
-        ProblemConfig s_config = new ProblemConfig ( 1,                   
-                                                    new Grupos (4, 4),    
+        ProblemConfig s_config = new ProblemConfig ( 1,
+                                                    new Grupos (4, 4),
                                                     new Centros (3, 1, 4),
-                                                    15,                   
-                                                    1,                    
-                                                    2,                    
-                                                    10,                   
-                                                    100                   
+                                                    15,
+                                                    1,
+                                                    2,
+                                                    10,
+                                                    100,
+                                                    3
                                                     );
+        
         Helicopter h = new Helicopter();
         if (h.computeTotalTripTime (0, 0, s_config) == 0.0)
             System.out.println ("correct answer");

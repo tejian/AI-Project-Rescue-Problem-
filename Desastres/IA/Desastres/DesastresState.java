@@ -199,6 +199,57 @@ public class DesastresState
         return true;
     }
 
+    /**
+     * Moves group p_g to trip p_t of helicopter p_h if if satisfies
+     * capacity constrains of each flight (15 person per flight).
+     * pre : given helicopter and trip must exits
+     * @return true if the operation was succesful
+     */
+    public boolean moveGroup (int p_g, int p_h, int p_t)
+    {
+        Group t_group = m_gruops.get (p_g);
+
+        int curHeliIndex = t_group.m_heli;
+        int curTripIndex = t_group.m_trip;
+
+        // if its already in the desired trip do nothing
+        if (curHeliIndex == p_h && curTripIndex == p_t)
+            return false;
+
+        Trip t_trip = m_helicopters.get (p_h).getTrips (). get (p_t);
+
+        // if not possible return false
+        int count = t_trip.getPersonCount (s_config.grupos);
+        if (count + s_config.grupos.get (p_g).getNPersonas() > s_config.helicopterCapacity)
+            return false;
+
+        // if possible move 
+        // add this group to trip
+        t_trip.add (p_g);
+
+        // first remove from current trip
+        Trip t_curTrip = m_helicopters.get (curHeliIndex).getTrips().get (curTripIndex);
+        t_curTrip.remove (new Integer (p_g));
+
+        // if trip was empty remove trip from heli
+        if (t_curTrip.isEmpty())
+        {
+            m_helicopters.get (curHeliIndex).getTrips(). remove (curTripIndex);
+            // if we remove the trip we need to update the remaining trips
+            ArrayList<Trip> trips = m_helicopters.get (curHeliIndex).getTrips();
+            for (int i = curTripIndex; i < trips.size(); i++)
+                for (Integer j : trips.get (i)) 
+                    --m_gruops.get (j).m_trip;
+        }
+
+        // now move the group to necessary trip
+        t_group.m_heli = p_h;
+        t_group.m_trip = p_t;
+
+        return true;
+    }
+
+
     ///////////////////////////////////////////////////////////////////////////
     // Heuristics
     ///////////////////////////////////////////////////////////////////////////

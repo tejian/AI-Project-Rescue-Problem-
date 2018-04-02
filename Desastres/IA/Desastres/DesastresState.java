@@ -17,11 +17,11 @@ public class DesastresState
      */
     // modify the variables here to test new config problems
     // we may need getters and setters for this in future
-    static int s_helicopterPerCenter = 1;
+    static int s_helicopterPerCenter = 3;
     static ProblemConfig s_config = new ProblemConfig       (
      /* nHeliPerCentre,                                   */ s_helicopterPerCenter,
-     /* grupos,                                           */ new Grupos (25, 4),
-     /* centros, (centres have same number of helicopter) */ new Centros (4, s_helicopterPerCenter, 4),
+     /* grupos,                                           */ new Grupos (50, 4),
+     /* centros, (centres have same number of helicopter) */ new Centros (10, s_helicopterPerCenter, 4),
      /* helicopterCapacity,                               */ 15,
      /* timeToSecurePerson, (min)                         */ 1,
      /* timeToSecureInjuredPerson, (min)                  */ 2,

@@ -21,7 +21,7 @@ public class DesastresState
     static ProblemConfig s_config = new ProblemConfig       (
      /* nHeliPerCentre,                                   */ s_helicopterPerCenter,
      /* grupos,                                           */ new Grupos (50, 4),
-     /* centros, (centres have same number of helicopter) */ new Centros (10, s_helicopterPerCenter, 4),
+     /* centros, (centres have same number of helicopter) */ new Centros (5, s_helicopterPerCenter, 4),
      /* helicopterCapacity,                               */ 15,
      /* timeToSecurePerson, (min)                         */ 1,
      /* timeToSecureInjuredPerson, (min)                  */ 2,
@@ -223,6 +223,11 @@ public class DesastresState
         if (count + s_config.grupos.get (p_g).getNPersonas() > s_config.helicopterCapacity)
             return false;
 
+        // if trip contains 3 groups already then also return false
+        if (t_trip.size() >= 3) 
+            return false;
+
+
         // if possible move 
         // add this group to trip
         t_trip.add (p_g);
@@ -269,6 +274,15 @@ public class DesastresState
             result += heli.computeTotalTripTime (x, y, s_config);
         }
         return result;
+    }
+
+    /**
+     * Heuristic that prioritizes time taken to save the injured people
+     */
+    public double getInjuredPriorityHeuristic()
+    {
+        // TODO: need to implement heuristic 2 <04-04-18> //
+        return 0;
     }
 
     //////////////////////////////////////////////////////

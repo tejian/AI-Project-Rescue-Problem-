@@ -16,8 +16,15 @@ class Main
 {
     public static void main (String[] args)
     {
+
         DesastresState state = new DesastresState();
-        state.generateInitialStateDefault();
+
+        // commenta i descommenta para probar diferente estado inicial
+        // state.generateInitialStateMaxGroupPerTrip();
+        state.generateInitialStateOneGroupPerTrip();
+        // state.generateInitialStateAllOnOneHeli();
+
+
         desasterHillClimbinSearch (state);
     }
 

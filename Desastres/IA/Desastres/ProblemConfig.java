@@ -28,8 +28,8 @@ public class ProblemConfig
                           float   p_timeToSecurePerson,
                           float   p_timeToSecureInjuredPerson,
                           float   p_timeBetweenLandingAndTakeOff,
-                          float   p_helicopterSpeed,                 
-                          float   p_heliGroupCapacity)                 
+                          float   p_helicopterSpeed,
+                          float   p_heliGroupCapacity)
     {
         nHeliPerCentre               = p_nHeliPerCentre;
         grupos                       = p_grupos;

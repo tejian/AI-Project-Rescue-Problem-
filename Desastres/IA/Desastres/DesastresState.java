@@ -17,11 +17,11 @@ public class DesastresState
      */
     // modify the variables here to test new config problems
     // we may need getters and setters for this in future
-    static int s_helicopterPerCenter = 3;
+    static int s_helicopterPerCenter = 1;
     static ProblemConfig s_config = new ProblemConfig       (
      /* nHeliPerCentre,                                   */ s_helicopterPerCenter,
-     /* grupos,                                           */ new Grupos (50, 4),
-     /* centros, (centres have same number of helicopter) */ new Centros (5, s_helicopterPerCenter, 4),
+     /* grupos,                                           */ new Grupos (100, 1234),
+     /* centros, (centres have same number of helicopter) */ new Centros (5, s_helicopterPerCenter, 1234),
      /* helicopterCapacity,                               */ 15,
      /* timeToSecurePerson, (min)                         */ 1,
      /* timeToSecureInjuredPerson, (min)                  */ 2,
@@ -103,7 +103,7 @@ public class DesastresState
      * Must Be Always called at the beginning otherwise
      * all the other functions will result in error
      */
-    public void generateInitialStateDefault ()
+    public void generateInitialStateMaxGroupPerTrip ()
     {
         int nHelis = s_config.centros.size() * s_config.centros.get (0).getNHelicopteros();
         int nGrups = s_config.grupos.size();
@@ -142,6 +142,65 @@ public class DesastresState
             ++currentGroupCount;
         }
     }
+
+    /**
+     * Inital state generator.
+     * Simply assigns one groups to one trip
+     * Must Be Always called at the beginning otherwise
+     * all the other functions will result in error
+     */
+    public void generateInitialStateOneGroupPerTrip() 
+    {
+        int nHelis = s_config.centros.size() * s_config.centros.get (0).getNHelicopteros();
+        int nGrups = s_config.grupos.size();
+        m_helicopters = new ArrayList <Helicopter> (nHelis);
+        m_gruops      = new ArrayList <Group> (nGrups);
+
+        // helicopter belong to centre -- (current index) / nHeliPerCentre
+        for (int i = 0; i < nHelis; ++i)
+            m_helicopters.add (new Helicopter());
+
+        for (int i = 0; i < nGrups; ++i)
+            m_gruops.add (new Group());
+
+        int currentHeliIndex = 0;
+        for (int i = 0; i < nGrups; ++i)
+        {
+            Trip trip = new Trip();
+            trip.add (i);
+            m_helicopters.get (currentHeliIndex).getTrips().add (trip);
+            m_gruops.get (i).m_heli = currentHeliIndex;
+            m_gruops.get (i).m_trip = m_helicopters.get (currentHeliIndex).getTrips().size() - 1;
+            currentHeliIndex++;
+            currentHeliIndex = currentHeliIndex % nHelis;
+        }
+    }
+
+    public void generateInitialStateAllOnOneHeli()
+    {
+        int nHelis = s_config.centros.size() * s_config.centros.get (0).getNHelicopteros();
+        int nGrups = s_config.grupos.size();
+        m_helicopters = new ArrayList <Helicopter> (nHelis);
+        m_gruops      = new ArrayList <Group> (nGrups);
+
+        // helicopter belong to centre -- (current index) / nHeliPerCentre
+        for (int i = 0; i < nHelis; ++i)
+            m_helicopters.add (new Helicopter());
+
+        for (int i = 0; i < nGrups; ++i)
+            m_gruops.add (new Group());
+
+        int currentHeliIndex = 0;
+        for (int i = 0; i < nGrups; ++i)
+        {
+            Trip trip = new Trip();
+            trip.add (i);
+            m_helicopters.get (currentHeliIndex).getTrips().add (trip);
+            m_gruops.get (i).m_heli = currentHeliIndex;
+            m_gruops.get (i).m_trip = m_helicopters.get (currentHeliIndex).getTrips().size() - 1;
+        }
+    }
+
 
     /////////////////////////////////////////////////////////////////////////
     // OPERATORS
@@ -231,8 +290,10 @@ public class DesastresState
         // if possible move 
         // add this group to trip
         t_trip.add (p_g);
+        t_group.m_heli = p_h;
+        t_group.m_trip = p_t;
 
-        // first remove from current trip
+        // now remove from current trip
         Trip t_curTrip = m_helicopters.get (curHeliIndex).getTrips().get (curTripIndex);
         t_curTrip.remove (new Integer (p_g));
 
@@ -246,10 +307,6 @@ public class DesastresState
                 for (Integer j : trips.get (i)) 
                     --m_gruops.get (j).m_trip;
         }
-
-        // now move the group to necessary trip
-        t_group.m_heli = p_h;
-        t_group.m_trip = p_t;
 
         return true;
     }
@@ -346,7 +403,8 @@ public class DesastresState
     {
         DesastresState hehe = new DesastresState ();
         hehe.testPrintCentrosAndGrupos();
-        hehe.generateInitialStateDefault();
+        // hehe.generateInitialStateOneGroupPerTrip();
+        hehe.generateInitialStateAllOnOneHeli();
         hehe.testPrintState();
         //hehe.swapGroup (0,1);
         //hehe.swapGroup (2,3);

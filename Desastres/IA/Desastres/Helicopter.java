@@ -85,7 +85,6 @@ public class Helicopter
                                                     100,
                                                     3
                                                     );
-        
         Helicopter h = new Helicopter();
         if (h.computeTotalTripTime (0, 0, s_config) == 0.0)
             System.out.println ("correct answer");

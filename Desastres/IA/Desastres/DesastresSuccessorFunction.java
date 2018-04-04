@@ -6,9 +6,11 @@ import aima.search.framework.SuccessorFunction;
 import java.util.ArrayList;
 import java.util.List;
 
+
 public class DesastresSuccessorFunction implements SuccessorFunction {
     public List getSuccessors(Object aState) {
         ArrayList retVal = new ArrayList();
+
         // cast to desaster state
         DesastresState ds = (DesastresState) aState;
         // get number of groups
@@ -17,6 +19,7 @@ public class DesastresSuccessorFunction implements SuccessorFunction {
 
         // swap against each group if they are not same or its possible
         for (int i = 0; i < ngroup; ++i)
+        {
             for (int j = 0; j < ngroup; ++j)
             {
                 // pass if same group
@@ -27,9 +30,11 @@ public class DesastresSuccessorFunction implements SuccessorFunction {
                 if (nds.swapGroup (i, j))
                 {
                     double val = nds.getTotalTimeHeuristic();
+                    // double val = 0;
                     retVal.add (new Successor ("Swap " + Integer.toString (i) + " " + Integer.toString (j) + " " + Double.toString (val), nds));
                 }
             }
+        }
 
 
         // move a group to every possible trips
@@ -43,6 +48,7 @@ public class DesastresSuccessorFunction implements SuccessorFunction {
                     if (nds.moveGroup (k, i, j))
                     {
                         double val = nds.getTotalTimeHeuristic();
+                        // double val = 0;
                         retVal.add (new Successor ("Move " 
                                                    + Integer.toString (k) + " " 
                                                    + Integer.toString (i) + " " 
@@ -66,6 +72,7 @@ public class DesastresSuccessorFunction implements SuccessorFunction {
                 if (nds.moveGroup (k, i, j))
                 {
                         double val = nds.getTotalTimeHeuristic();
+                        // double val = 0;
                         retVal.add (new Successor ("Creating and moving " 
                                                    + Integer.toString (k) + " " 
                                                    + Integer.toString (i) + " " 
@@ -74,9 +81,7 @@ public class DesastresSuccessorFunction implements SuccessorFunction {
             }
         }
 
-
         // TODO: Need to optimize this part  <02-04-18, Sabin> //
-        
 
         return retVal;
     }

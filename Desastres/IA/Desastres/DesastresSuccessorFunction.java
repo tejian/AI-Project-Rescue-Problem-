@@ -30,6 +30,7 @@ public class DesastresSuccessorFunction implements SuccessorFunction {
                 if (nds.swapGroup (i, j))
                 {
                     double val = nds.getTotalTimeHeuristic();
+                    // double val = nds.getInjuredPriorityHeuristic();
                     // double val = 0;
                     retVal.add (new Successor ("Swap " + Integer.toString (i) + " " + Integer.toString (j) + " " + Double.toString (val), nds));
                 }
@@ -48,6 +49,7 @@ public class DesastresSuccessorFunction implements SuccessorFunction {
                     if (nds.moveGroup (k, i, j))
                     {
                         double val = nds.getTotalTimeHeuristic();
+                        // double val = nds.getInjuredPriorityHeuristic();
                         // double val = 0;
                         retVal.add (new Successor ("Move " 
                                                    + Integer.toString (k) + " " 
@@ -72,6 +74,7 @@ public class DesastresSuccessorFunction implements SuccessorFunction {
                 if (nds.moveGroup (k, i, j))
                 {
                         double val = nds.getTotalTimeHeuristic();
+                        // double val = nds.getInjuredPriorityHeuristic();
                         // double val = 0;
                         retVal.add (new Successor ("Creating and moving " 
                                                    + Integer.toString (k) + " " 

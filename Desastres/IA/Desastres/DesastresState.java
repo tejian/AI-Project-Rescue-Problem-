@@ -15,8 +15,6 @@ public class DesastresState
     /**
      * Static data structures that all the states will share
      */
-    // modify the variables here to test new config problems
-    // we may need getters and setters for this in future
     static int s_helicopterPerCenter = 1;
     static ProblemConfig s_config = new ProblemConfig       (
      /* nHeliPerCentre,                                   */ s_helicopterPerCenter,
@@ -328,7 +326,10 @@ public class DesastresState
             int x = s_config.centros.get (i / s_config.nHeliPerCentre).getCoordX();
             int y = s_config.centros.get (i / s_config.nHeliPerCentre).getCoordY();
             Helicopter heli = m_helicopters.get (i);
-            result += heli.computeTotalTripTime (x, y, s_config);
+
+            HelicopterHeuristicVisitor vis = new HelicopterHeuristicVisitor (s_config, x, y);
+            heli.accept (vis);
+            result += vis.getTotalTripTime();
         }
         return result;
     }
@@ -338,8 +339,22 @@ public class DesastresState
      */
     public double getInjuredPriorityHeuristic()
     {
-        // TODO: need to implement heuristic 2 <04-04-18> //
-        return 0;
+        double totalTimeTaken = 0.0;
+        double timeToSaveInjured = 0.0;
+        for (int i = 0; i < m_helicopters.size(); ++i)
+        {
+            int x = s_config.centros.get (i / s_config.nHeliPerCentre).getCoordX();
+            int y = s_config.centros.get (i / s_config.nHeliPerCentre).getCoordY();
+            Helicopter heli = m_helicopters.get (i);
+
+            HelicopterHeuristicVisitor vis = new HelicopterHeuristicVisitor (s_config, x, y);
+            heli.accept (vis);
+            // update time taken to save injured
+            if (vis.getTimeToSaveInjured() > timeToSaveInjured)
+                timeToSaveInjured = vis.getTimeToSaveInjured();
+            totalTimeTaken += vis.getTotalTripTime();
+        }
+        return totalTimeTaken + timeToSaveInjured;
     }
 
     //////////////////////////////////////////////////////

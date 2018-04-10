@@ -21,24 +21,24 @@ public class DesastresSuccessorFunction implements SuccessorFunction {
         int ngroup = ds.getNGroups();
 
 
-        // swap against each group if they are not same or its possible
-        for (int i = 0; i < ngroup; ++i)
-        {
-            for (int j = 0; j < ngroup; ++j)
-            {
-                // pass if same group
-                if (i == j)
-                    continue;
-                DesastresState nds = ds.clone();
-                // only add if swapping is possible
-                if (nds.swapGroup (i, j))
-                {
-                    double val = hf.getHeuristicValue (nds);
-                    // double val = 0;
-                    retVal.add (new Successor ("Swap " + Integer.toString (i) + " " + Integer.toString (j) + " " + Double.toString (val), nds));
-                }
-            }
-        }
+        // // swap against each group if they are not same or its possible
+        // for (int i = 0; i < ngroup; ++i)
+        // {
+        //     for (int j = 0; j < ngroup; ++j)
+        //     {
+        //         // pass if same group
+        //         if (i == j)
+        //             continue;
+        //         DesastresState nds = ds.clone();
+        //         // only add if swapping is possible
+        //         if (nds.swapGroup (i, j))
+        //         {
+        //             double val = hf.getHeuristicValue (nds);
+        //             // double val = 0;
+        //             retVal.add (new Successor ("Swap " + Integer.toString (i) + " " + Integer.toString (j) + " " + Double.toString (val), nds));
+        //         }
+        //     }
+        // }
 
 
         // move a group to every possible trips

@@ -6,8 +6,7 @@ import IA.Desastres.DesastresSuccessorFunctionSA;
 import IA.Desastres.DesastresGoalTest;
 import IA.Desastres.Grupos;
 import IA.Desastres.Centros;
-import IA.Desastres.ProblemConfig;
-
+import IA.Desastres.ProblemConfig; 
 
 import aima.search.framework.Problem;
 import aima.search.framework.Search;
@@ -30,21 +29,21 @@ class Main
     public static void main (String[] args)
     {
         // interactiveMode();
-        executionMode();
+        executionMode(Integer.parseInt (args [0]));
     }
 
     /**
      * Hard code variables of program and simply run from terminal
      * to see results.
      */
-    private static void executionMode ()
+    private static void executionMode (int sd)
     {
         // problem settings
         // modify here to test variables
         int groupCount = 100;
         int heliPerCentre = 1;
         int centreCount = 5; 
-        int seed = 1234;
+        int seed = sd;
 
         DesastresState.getProblemConfig().nHeliPerCentre = heliPerCentre;
         DesastresState.getProblemConfig().grupos = new Grupos (groupCount, seed);
@@ -54,13 +53,13 @@ class Main
 
         // initial states
         // state.generateInitialStateAllOnOneHeli();
-        state.generateInitialStateOneGroupPerTrip();
-        // state.generateInitialStateAllOnOneHeli();
+        // state.generateInitialStateOneGroupPerTrip();
+        state.generateInitialStateMaxGroupPerTrip();
 
         // search techniques
-        // desasterHillClimbinSearch        (state, new DesasterTotalTimeHeuristic());
+        desasterHillClimbinSearch        (state, new DesasterTotalTimeHeuristic());
         // desasterHillClimbinSearch        (state, new DesasterInjuredHeuristic());
-        desasterSimulatedAnnealingSearch (state, new DesasterTotalTimeHeuristic());
+        // desasterSimulatedAnnealingSearch (state, new DesasterTotalTimeHeuristic());
         // desasterSimulatedAnnealingSearch (state, new DesasterInjuredHeuristic());
     }
 
@@ -108,7 +107,7 @@ class Main
                 state.generateInitialStateOneGroupPerTrip();
                 break;
             default:
-                state.generateInitialStateAllOnOneHeli();
+                state.generateInitialStateMaxGroupPerTrip();
                 break;
         }
 

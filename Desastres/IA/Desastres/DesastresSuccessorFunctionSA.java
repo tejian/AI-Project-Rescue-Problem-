@@ -2,6 +2,7 @@ package IA.Desastres;
 
 import aima.search.framework.Successor;
 import aima.search.framework.SuccessorFunction;
+import aima.search.framework.HeuristicFunction;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -11,6 +12,9 @@ import java.util.Random;
 public class DesastresSuccessorFunctionSA implements SuccessorFunction {
     public List getSuccessors(Object aState) {
         ArrayList retVal = new ArrayList();
+
+        HeuristicFunction hf = new DesasterTotalTimeHeuristic();
+        // HeuristicFunction hf = new DesasterInjuredHeuristic();
 
         // cast to desaster state
         DesastresState ds = (DesastresState) aState;
@@ -79,7 +83,8 @@ public class DesastresSuccessorFunctionSA implements SuccessorFunction {
             }
         }
 
+        System.out.println ("i am here");
+
         return retVal;
     }
 }
-

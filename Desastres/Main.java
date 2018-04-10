@@ -135,6 +135,8 @@ class Main
         method = sc.nextInt();
         switch (method)
         {
+            case 2:
+                desasterSimulatedAnnealingSearch (state, hf);
             default:
                 desasterHillClimbinSearch (state, hf);
         }
@@ -172,10 +174,10 @@ class Main
         try
         {
             Problem problem =  new Problem(p_state,
-                                           new DesastresSuccessorFunctionSA(),
+                                           new DesastresSuccessorFunction(),
                                            new DesastresGoalTest(),
                                            hf);
-            Search search =  new SimulatedAnnealingSearch (2000, 100, 5, 0.001);
+            Search search =  new SimulatedAnnealingSearch (1000, 100, 5, 0.001);
             SearchAgent agent = new SearchAgent(problem,search);
 
             System.out.println();
@@ -207,5 +209,4 @@ class Main
             System.out.println(action);
         }
     }
-} 
-
+}

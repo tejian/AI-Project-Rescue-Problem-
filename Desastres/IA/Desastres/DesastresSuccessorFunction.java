@@ -2,6 +2,7 @@ package IA.Desastres;
 
 import aima.search.framework.Successor;
 import aima.search.framework.SuccessorFunction;
+import aima.search.framework.HeuristicFunction;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -10,6 +11,9 @@ import java.util.List;
 public class DesastresSuccessorFunction implements SuccessorFunction {
     public List getSuccessors(Object aState) {
         ArrayList retVal = new ArrayList();
+
+        HeuristicFunction hf = new DesasterTotalTimeHeuristic();
+        // HeuristicFunction hf = new DesasterInjuredHeuristic();
 
         // cast to desaster state
         DesastresState ds = (DesastresState) aState;
@@ -29,8 +33,7 @@ public class DesastresSuccessorFunction implements SuccessorFunction {
                 // only add if swapping is possible
                 if (nds.swapGroup (i, j))
                 {
-                    double val = nds.getTotalTimeHeuristic();
-                    // double val = nds.getInjuredPriorityHeuristic();
+                    double val = hf.getHeuristicValue (nds);
                     // double val = 0;
                     retVal.add (new Successor ("Swap " + Integer.toString (i) + " " + Integer.toString (j) + " " + Double.toString (val), nds));
                 }
@@ -48,8 +51,7 @@ public class DesastresSuccessorFunction implements SuccessorFunction {
                     DesastresState nds = ds.clone ();
                     if (nds.moveGroup (k, i, j))
                     {
-                        double val = nds.getTotalTimeHeuristic();
-                        // double val = nds.getInjuredPriorityHeuristic();
+                        double val = hf.getHeuristicValue (nds);
                         // double val = 0;
                         retVal.add (new Successor ("Move " 
                                                    + Integer.toString (k) + " " 
@@ -73,8 +75,7 @@ public class DesastresSuccessorFunction implements SuccessorFunction {
                 // move every single group to it
                 if (nds.moveGroup (k, i, j))
                 {
-                        double val = nds.getTotalTimeHeuristic();
-                        // double val = nds.getInjuredPriorityHeuristic();
+                        double val = hf.getHeuristicValue (nds);
                         // double val = 0;
                         retVal.add (new Successor ("Creating and moving " 
                                                    + Integer.toString (k) + " " 
@@ -83,10 +84,8 @@ public class DesastresSuccessorFunction implements SuccessorFunction {
                 }
             }
         }
-
-        // TODO: Need to optimize this part  <02-04-18, Sabin> //
-
         return retVal;
+
     }
 }
 

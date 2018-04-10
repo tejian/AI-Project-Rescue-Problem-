@@ -58,9 +58,9 @@ class Main
         // state.generateInitialStateAllOnOneHeli();
 
         // search techniques
-        desasterHillClimbinSearch        (state, new DesasterTotalTimeHeuristic());
+        // desasterHillClimbinSearch        (state, new DesasterTotalTimeHeuristic());
         // desasterHillClimbinSearch        (state, new DesasterInjuredHeuristic());
-        // desasterSimulatedAnnealingSearch (state, new DesasterTotalTimeHeuristic());
+        desasterSimulatedAnnealingSearch (state, new DesasterTotalTimeHeuristic());
         // desasterSimulatedAnnealingSearch (state, new DesasterInjuredHeuristic());
     }
 
@@ -174,7 +174,7 @@ class Main
         try
         {
             Problem problem =  new Problem(p_state,
-                                           new DesastresSuccessorFunction(),
+                                           new DesastresSuccessorFunctionSA(),
                                            new DesastresGoalTest(),
                                            hf);
             Search search =  new SimulatedAnnealingSearch (1000, 100, 5, 0.001);

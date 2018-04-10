@@ -40,6 +40,7 @@ public class DesastresSuccessorFunctionSA implements SuccessorFunction {
                 } while (!nds.swapGroup (i, j));
 
                 retVal.add (new Successor ("Swap " + Integer.toString (i) + " " + Integer.toString (j), nds));
+                break;
             }
 
             case 1:
@@ -63,9 +64,10 @@ public class DesastresSuccessorFunctionSA implements SuccessorFunction {
                                            + Integer.toString (k) + " " 
                                            + Integer.toString (i) + " " 
                                            + Integer.toString (j), nds));
+                break;
             }
 
-            case 3:
+            case 2:
             {
                 // creating new and moving
                 int k = rand.nextInt (ngroup);
@@ -80,10 +82,9 @@ public class DesastresSuccessorFunctionSA implements SuccessorFunction {
                                            + Integer.toString (k) + " " 
                                            + Integer.toString (i) + " " 
                                            + Integer.toString (j), nds));
+                break;
             }
         }
-
-        System.out.println ("i am here");
 
         return retVal;
     }

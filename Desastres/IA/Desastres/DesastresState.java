@@ -256,6 +256,32 @@ public class DesastresState
         return true;
     }
 
+    public boolean swapTrip (int helix, int tripx, int heliy, int tripy) 
+    {
+        Helicopter heli_x = m_helicopters.get (helix);
+        Helicopter heli_y = m_helicopters.get (heliy);
+        
+        Trip trip_x = heli_x.getTrips().get (tripx);
+        Trip trip_y = heli_y.getTrips().get (tripy);
+
+        heli_x.getTrips().set (tripx, trip_y);
+        heli_y.getTrips().set (tripy, trip_x);
+
+        // update the groups inside trip
+        for (Integer i: heli_x.getTrips().get (tripx))
+        {
+            m_gruops.get (i).m_heli = helix;
+            m_gruops.get (i).m_trip = tripx;
+        }
+
+        for (Integer i: heli_y.getTrips().get (tripy))
+        {
+            m_gruops.get (i).m_heli = heliy;
+            m_gruops.get (i).m_trip = tripy;
+        }
+        return true;
+    }
+
     /**
      * Moves group p_g to trip p_t of helicopter p_h if if satisfies
      * capacity constrains of each flight (15 person per flight).

@@ -1,3 +1,4 @@
+
 package IA.Desastres;
 
 import aima.search.framework.Successor;
@@ -7,14 +8,15 @@ import aima.search.framework.HeuristicFunction;
 import java.util.ArrayList;
 import java.util.List;
 
+
 /**
- * This succesor function consists of the following operations.
- * Moving a group to any trip
- * Creating a new Empty trip and moving a group to it
+ * This succesor function has the following operators
+ * swapping any two trips in different helicopters
+ * swapping groups in same trip
+ * moving a group to any trip
+ * creating new empty trip and moving a group to it
  */
-
-
-public class DesastresSuccessorFunction implements SuccessorFunction {
+public class DesastresSuccessorFunction4 implements SuccessorFunction {
     public List getSuccessors(Object aState) {
         ArrayList retVal = new ArrayList();
 
@@ -26,6 +28,44 @@ public class DesastresSuccessorFunction implements SuccessorFunction {
         // get number of groups
         int ngroup = ds.getNGroups();
 
+
+        // swap only positions of groups in a trip
+        for (Helicopter heli : ds.getHelicopters())
+            for (Trip t : heli.getTrips())
+                for (Integer i : t)
+                    for (Integer j : t)
+                    {
+                        if (i == j)
+                            continue;
+                        DesastresState nds = ds.clone();
+                        if (nds.swapGroup (i, j))
+                        {
+                            double val = hf.getHeuristicValue (nds);
+                            // double val = 0;
+                            retVal.add (new Successor ("Swap " + Integer.toString (i) + " " + Integer.toString (j) + " " + Double.toString (val), nds));
+                        }
+                    }
+
+
+        // swap trips 
+        for (int h1 = 0; h1 < ds.getHelicopters().size(); h1++)
+            for (int t1 = 0; t1 < ds.getHelicopters(). get (h1).getTrips().size(); ++t1)
+                for (int h2 = 0; h2 < ds.getHelicopters().size(); h2++)
+                    for (int t2 = 0; t2 < ds.getHelicopters(). get (h2).getTrips().size(); ++t2)
+                    {
+                        if (h1 == h2)
+                            continue;
+                        DesastresState nds = ds.clone();
+                        if (nds.swapTrip (h1, t1, h2, t2))
+                        {
+                            double val = hf.getHeuristicValue (nds);
+                            // double val = 0;
+                            retVal.add (new Successor ("Swap heli trip " 
+                                                       + Integer.toString (h1) + " " + Integer.toString (t1) + " " 
+                                                       + Integer.toString (h2) + " " + Integer.toString (t2) + " " 
+                                                       + Double.toString (val), nds));
+                        }
+                    }
 
         // move a group to every possible trips
         for (int i = 0; i < ds.getHelicopters().size(); i++)

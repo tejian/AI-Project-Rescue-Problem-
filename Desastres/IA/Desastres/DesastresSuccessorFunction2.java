@@ -8,13 +8,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * This succesor function consists of the following operations.
+ * This Succesor function has the following operations.
+ * Swaping a group with another group
  * Moving a group to any trip
- * Creating a new Empty trip and moving a group to it
+ * creating new empty trip and moving a group to it.
  */
 
-
-public class DesastresSuccessorFunction implements SuccessorFunction {
+public class DesastresSuccessorFunction2 implements SuccessorFunction {
     public List getSuccessors(Object aState) {
         ArrayList retVal = new ArrayList();
 
@@ -26,6 +26,24 @@ public class DesastresSuccessorFunction implements SuccessorFunction {
         // get number of groups
         int ngroup = ds.getNGroups();
 
+
+        // swap against each group if they are not same or its possible
+        for (int i = 0; i < ngroup; ++i)
+            for (int j = 0; j < ngroup; ++j)
+            {
+                // pass if same group
+                if (i == j)
+                    continue;
+                DesastresState nds = ds.clone();
+                // only add if swapping is possible
+                if (nds.swapGroup (i, j))
+                {
+                    double val = hf.getHeuristicValue (nds);
+                    // double val = 0;
+                    retVal.add (new Successor ("Swap " + Integer.toString (i) + " " + Integer.toString (j) + " " + Double.toString (val), nds));
+                }
+            }
+        
 
         // move a group to every possible trips
         for (int i = 0; i < ds.getHelicopters().size(); i++)

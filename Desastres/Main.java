@@ -2,17 +2,22 @@ import IA.Desastres.DesastresState;
 import IA.Desastres.DesasterTotalTimeHeuristic;
 import IA.Desastres.DesasterInjuredHeuristic;
 import IA.Desastres.DesastresSuccessorFunction;
+import IA.Desastres.DesastresSuccessorFunction2;
+import IA.Desastres.DesastresSuccessorFunction3;
+import IA.Desastres.DesastresSuccessorFunction4;
 import IA.Desastres.DesastresSuccessorFunctionSA;
 import IA.Desastres.DesastresGoalTest;
 import IA.Desastres.Grupos;
 import IA.Desastres.Centros;
 import IA.Desastres.ProblemConfig; 
 
+
 import aima.search.framework.Problem;
 import aima.search.framework.Search;
 import aima.search.framework.SearchAgent;
 import aima.search.informed.HillClimbingSearch;
 import aima.search.informed.SimulatedAnnealingSearch;
+import aima.search.framework.SuccessorFunction;
 import aima.search.framework.HeuristicFunction;
 
 import java.util.Iterator;
@@ -28,128 +33,67 @@ class Main
      */
     public static void main (String[] args)
     {
-        // interactiveMode();
-        executionMode(Integer.parseInt (args [0]));
+        if (args.length != 4)
+        {
+            System.out.println("Usage:   java Main groups helicopter centres seed");
+            System.out.println("example: java Main 100 1 5 1234");
+            return;
+        }
+        executionMode(Integer.parseInt (args [0]), Integer.parseInt (args [1]), Integer.parseInt (args [2]), Integer.parseInt (args [3]));
     }
 
     /**
      * Hard code variables of program and simply run from terminal
      * to see results.
      */
-    private static void executionMode (int sd)
+    private static void executionMode (int gc, int hpc, int cc, int sd)
     {
         // problem settings
         // modify here to test variables
-        int groupCount = 100;
-        int heliPerCentre = 1;
-        int centreCount = 5; 
+        int groupCount = gc;
+        int heliPerCentre = hpc;
+        int centreCount = cc; 
         int seed = sd;
 
+        // setting problem config
         DesastresState.getProblemConfig().nHeliPerCentre = heliPerCentre;
         DesastresState.getProblemConfig().grupos = new Grupos (groupCount, seed);
         DesastresState.getProblemConfig().centros = new Centros (centreCount, heliPerCentre, seed);
 
         DesastresState state = new DesastresState();
+
+        // successor function
+        SuccessorFunction sc;
+        // sc = new DesastresSuccessorFunction();    // move group, create new trip
+        // sc = new DesastresSuccessorFunction2();   // move group, create new trip, swap all group
+        // sc = new DesastresSuccessorFunction3();   // move group, create new trip, swap group in same trip, swap trip
+        sc = new DesastresSuccessorFunction4();   // move group, create new trip, swap group in same trip, swap trip in different helicopters
 
         // initial states
         // state.generateInitialStateAllOnOneHeli();
         // state.generateInitialStateOneGroupPerTrip();
         state.generateInitialStateMaxGroupPerTrip();
 
-        // search techniques
-        desasterHillClimbinSearch        (state, new DesasterTotalTimeHeuristic());
-        // desasterHillClimbinSearch        (state, new DesasterInjuredHeuristic());
-        // desasterSimulatedAnnealingSearch (state, new DesasterTotalTimeHeuristic());
-        // desasterSimulatedAnnealingSearch (state, new DesasterInjuredHeuristic());
-    }
 
-    /**
-     * Interactive mode, Choose variables on program
-     * during execution.
-     */
-    private static void interactiveMode()
-    {
-        Scanner sc = new Scanner (System.in);
-
-        int groupCount;
-        int heliPerCentre;
-        int centreCount;
-        int seed;
-
-        System.out.println("choose no of group ?");
-        groupCount = sc.nextInt();
-        System.out.println("choose helicopters per centre ?");
-        heliPerCentre = sc.nextInt();
-        System.out.println("choose no of centres ?");
-        centreCount = sc.nextInt();
-        System.out.println("choose random Seed ?");
-        seed = sc.nextInt();
-
-        DesastresState.getProblemConfig().nHeliPerCentre = heliPerCentre;
-        DesastresState.getProblemConfig().grupos = new Grupos (groupCount, seed);
-        DesastresState.getProblemConfig().centros = new Centros (centreCount, heliPerCentre, seed);
-
-        DesastresState state = new DesastresState();
-
-
-        int initialState;
-        System.out.println("choose different initial state ?");
-        System.out.println("1. only one heli of one centre is used. And only one group per trip");
-        System.out.println("2. all heli used. only one group per trip");
-        System.out.println("3. all heli used. trip contains maximum group that it can carry");
-        initialState = sc.nextInt();
-        switch (initialState)
-        {
-            case 1:
-                state.generateInitialStateAllOnOneHeli();
-                break;
-            case 2:
-                state.generateInitialStateOneGroupPerTrip();
-                break;
-            default:
-                state.generateInitialStateMaxGroupPerTrip();
-                break;
-        }
-
-        int heuristic;
-        System.out.println ("which heuristic ?");
-        System.out.println ("1. total time");
-        System.out.println ("2. priority to injured");
-        heuristic = sc.nextInt();
+        // heuristic
         HeuristicFunction hf;
-        switch (heuristic)
-        {
-            case 2:
-                hf = new DesasterInjuredHeuristic();
-                break;
-            default:
-                hf = new DesasterTotalTimeHeuristic();
-        }
+        hf = new DesasterTotalTimeHeuristic();
+        // hf = new DesasterInjuredHeuristic();
 
-
-        int method;
-        System.out.println("choose algorithm ?");
-        System.out.println("1. hillclimbing");
-        System.out.println("2. simulated annealing");
-        method = sc.nextInt();
-        switch (method)
-        {
-            case 2:
-                desasterSimulatedAnnealingSearch (state, hf);
-            default:
-                desasterHillClimbinSearch (state, hf);
-        }
+        // search techniques
+        desasterHillClimbinSearch        (state, sc, hf);
+        // desasterSimulatedAnnealingSearch (state, hf);
     }
 
     /**
      * hill climbing search to solve problem
      */
-    private static void desasterHillClimbinSearch (DesastresState p_state, HeuristicFunction hf)
+    private static void desasterHillClimbinSearch (DesastresState p_state, SuccessorFunction sc, HeuristicFunction hf)
     {
         try
         {
             Problem problem =  new Problem(p_state,
-                                           new DesastresSuccessorFunction(),
+                                           sc,
                                            new DesastresGoalTest(),
                                            hf);
             Search search =  new HillClimbingSearch();

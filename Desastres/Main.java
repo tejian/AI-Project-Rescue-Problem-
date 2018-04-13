@@ -77,12 +77,15 @@ class Main
 
         // heuristic
         HeuristicFunction hf;
-        hf = new DesasterTotalTimeHeuristic();
-        // hf = new DesasterInjuredHeuristic();
+        hf = new DesasterTotalTimeHeuristic();           // heuristic 1
+        // hf = new DesasterInjuredHeuristic();              // heuristic 2 
 
         // search techniques
         desasterHillClimbinSearch        (state, sc, hf);
-        // desasterSimulatedAnnealingSearch (state, hf);
+        //
+        // desasterSimulatedAnnealingSearch          iter        k     lamda
+        // desasterSimulatedAnnealingSearch (state, hf, 26000, 100, 30, (float)0.00026);
+        // puedes modificar esas variables de simulated annealing
     }
 
     /**
@@ -112,7 +115,7 @@ class Main
     /**
      * simulated annealing climbing search to solve problem
      */
-    private static void desasterSimulatedAnnealingSearch (DesastresState p_state, HeuristicFunction hf)
+    private static void desasterSimulatedAnnealingSearch (DesastresState p_state, HeuristicFunction hf, int steps, int a, int b, float c)
     {
         try
         {
@@ -120,11 +123,17 @@ class Main
                                            new DesastresSuccessorFunctionSA(),
                                            new DesastresGoalTest(),
                                            hf);
-            Search search =  new SimulatedAnnealingSearch (1000, 100, 5, 0.001);
+            Search search =  new SimulatedAnnealingSearch (steps, a, b, c);
             SearchAgent agent = new SearchAgent(problem,search);
 
             System.out.println();
-            printActions(agent.getActions());
+            // printActions(agent.getActions());
+            for (Object o : agent.getActions())
+            {
+                System.out.println(hf.getHeuristicValue (o));
+            }
+
+
             printInstrumentation(agent.getInstrumentation());
         }
         catch (Exception e)

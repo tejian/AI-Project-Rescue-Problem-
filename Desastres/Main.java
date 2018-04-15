@@ -82,9 +82,8 @@ class Main
 
         // search techniques
         desasterHillClimbinSearch        (state, sc, hf);
-        //
         // desasterSimulatedAnnealingSearch          iter        k     lamda
-        // desasterSimulatedAnnealingSearch (state, hf, 26000, 100, 30, (float)0.00026);
+        desasterSimulatedAnnealingSearch (state, hf, 16000, 100, 30, (float)0.00126);
         // puedes modificar esas variables de simulated annealing
     }
 
@@ -93,6 +92,8 @@ class Main
      */
     private static void desasterHillClimbinSearch (DesastresState p_state, SuccessorFunction sc, HeuristicFunction hf)
     {
+        System.out.println("================================================");
+        System.out.println("HILLCLIMBING SEARCH");
         try
         {
             Problem problem =  new Problem(p_state,
@@ -110,6 +111,7 @@ class Main
         {
             e.printStackTrace();
         }
+        System.out.println("================================================");
     }
 
     /**
@@ -117,6 +119,8 @@ class Main
      */
     private static void desasterSimulatedAnnealingSearch (DesastresState p_state, HeuristicFunction hf, int steps, int a, int b, float c)
     {
+        System.out.println("================================================");
+        System.out.println("SIMULATED ANNEALING SEARCH");
         try
         {
             Problem problem =  new Problem(p_state,
@@ -140,6 +144,7 @@ class Main
         {
             e.printStackTrace();
         }
+        System.out.println("================================================");
     }
 
 

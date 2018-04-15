@@ -174,6 +174,12 @@ public class DesastresState
         }
     }
 
+    /**
+     * Inital state generator.
+     * Simply assigns one groups to one trip
+     * Simple assigns all trip to only one heli
+     * all the other functions will result in error
+     */
     public void generateInitialStateAllOnOneHeli()
     {
         int nHelis = s_config.centros.size() * s_config.centros.get (0).getNHelicopteros();
@@ -256,6 +262,9 @@ public class DesastresState
         return true;
     }
 
+    /**
+     * Swapping of trips
+     */
     public boolean swapTrip (int helix, int tripx, int heliy, int tripy) 
     {
         Helicopter heli_x = m_helicopters.get (helix);
@@ -284,7 +293,7 @@ public class DesastresState
 
     /**
      * Moves group p_g to trip p_t of helicopter p_h if if satisfies
-     * capacity constrains of each flight (15 person per flight).
+     * capacity constrains of each flight (15 person per flight, 3 groups per flight)
      * pre : given helicopter and trip must exits
      * @return true if the operation was succesful
      */

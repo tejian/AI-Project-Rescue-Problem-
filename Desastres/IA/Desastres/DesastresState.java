@@ -398,7 +398,7 @@ public class DesastresState
     /**
      * prints all groups and centres
      */
-    public void testPrintCentrosAndGrupos()
+    static public void testPrintCentrosAndGrupos()
     {
         System.out.println ("printing centres");
         for (Centro c : s_config.centros)
@@ -427,38 +427,17 @@ public class DesastresState
         System.out.println ("Printing HeliCopters");
         for (int i = 0; i < m_helicopters.size(); ++i)
         {
+            if (i % s_config.nHeliPerCentre == 0) System.out.println ("Centre" + Integer.toString ((int) (i / s_config.nHeliPerCentre)));
+            System.out.print ("h" + Integer.toString (i % s_config.nHeliPerCentre) + " => ");
             Helicopter heli = m_helicopters.get (i);
-            System.out.println ("mi centro :" + i / s_config.nHeliPerCentre);
-            System.out.println ("Trips :");
             for (Trip trip : heli.getTrips())
             {
                 for (Integer j : trip)
-                    System.out.println (j);
-                System.out.println ("----");
+                    System.out.print (Integer.toString (j) + ",");
+                System.out.print(" --- ");
             }
-            System.out.println ("------------------");
-        }
-
-        System.out.println ("Printing Grupos");
-        for (int i = 0; i < m_gruops.size(); ++i)
-        {
-            System.out.println ("group : " + i);
-            System.out.println ("my heli : " + m_gruops.get (i).m_heli);
-            System.out.println ("my trip : " + m_gruops.get (i).m_trip);
-            System.out.println ("-----");
+            System.out.println ();
         }
     }
 
-    public static void main (String [] args)
-    {
-        DesastresState hehe = new DesastresState ();
-        hehe.testPrintCentrosAndGrupos();
-        // hehe.generateInitialStateOneGroupPerTrip();
-        hehe.generateInitialStateAllOnOneHeli();
-        hehe.testPrintState();
-        //hehe.swapGroup (0,1);
-        //hehe.swapGroup (2,3);
-        //hehe.testPrintState();
-        //System.out.println (hehe.getTotalTimeHeuristic());
-    }
 };

@@ -26,7 +26,7 @@ import java.util.Properties;
 
 import java.util.Scanner;
 
-class Main
+class DesastresDemo
 {
     /** 
      * Entry point to demo program.
@@ -35,8 +35,8 @@ class Main
     {
         if (args.length != 4)
         {
-            System.out.println("Usage:   java Main groups helicopter centres seed");
-            System.out.println("example: java Main 100 1 5 1234");
+            System.out.println("Usage:   java DesastresDemo groups helicopter centres seed");
+            System.out.println("example: java DesastresDemo 100 1 5 1234");
             return;
         }
         executionMode(Integer.parseInt (args [0]), Integer.parseInt (args [1]), Integer.parseInt (args [2]), Integer.parseInt (args [3]));
@@ -106,6 +106,11 @@ class Main
             System.out.println();
             printActions(agent.getActions());
             printInstrumentation(agent.getInstrumentation());
+            DesastresState ds = (DesastresState) search.getGoalState();
+            System.out.print("heuristic value :");
+            System.out.println(hf.getHeuristicValue (ds));
+            System.out.println();
+            ds.testPrintState();
         }
         catch (Exception e)
         {
@@ -130,15 +135,12 @@ class Main
             Search search =  new SimulatedAnnealingSearch (steps, a, b, c);
             SearchAgent agent = new SearchAgent(problem,search);
 
-            System.out.println();
-            // printActions(agent.getActions());
-            for (Object o : agent.getActions())
-            {
-                System.out.println(hf.getHeuristicValue (o));
-            }
-
-
+            DesastresState ds = (DesastresState) search.getGoalState();
+            System.out.print("heuristic value :");
+            System.out.println(hf.getHeuristicValue (ds));
             printInstrumentation(agent.getInstrumentation());
+            System.out.println();
+            ds.testPrintState();
         }
         catch (Exception e)
         {

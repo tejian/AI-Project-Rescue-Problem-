@@ -1,0 +1,6 @@
+
+javac -cp ".:./libs/Desastres.jar" DesastresDemo.java
+java -cp ".:./libs/Desastres.jar" DesastresDemo ngrup nheli ncentre seed
+
+javac -cp ".:./libs/Desastres.jar" DesastresFrame.java
+java -cp ".:./libs/Desastres.jar" DesastresFrame
